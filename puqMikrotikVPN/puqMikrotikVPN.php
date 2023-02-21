@@ -16,7 +16,7 @@ use WHMCS\Database\Capsule;
 function puqMikrotikVPN_MetaData(){
   return array(
       'DisplayName' => 'PUQ Mikrotik VPN',
-      'DefaultSSLPort' => '80',
+      'DefaultSSLPort' => '443',
       'language' => 'english',
   );
 }
@@ -45,7 +45,7 @@ function puqMikrotikVPN_ConfigOptions() {
 
 function puqMikrotikVPN_apiCurl($params,$data,$url,$method){
 
-  $curl_url = 'http://' . $params['serverhostname'] . ':'. $params['serverport'] . '/rest' . $url;
+  $curl_url = 'https://' . $params['serverhostname'] . ':'. $params['serverport'] . '/rest' . $url;
   $postdata = json_encode($data);
   $curl = curl_init();
   curl_setopt($curl, CURLOPT_URL, $curl_url);
