@@ -15,7 +15,7 @@ use WHMCS\Database\Capsule;
 
 function puqMikrotikVPN_MetaData(){
   return array(
-      'DisplayName' => 'PUQ Mikrotik VPN',
+      'DisplayName' => 'Compuitng ID - Mikrotik VPN',
       'DefaultSSLPort' => '443',
       'language' => 'english',
   );
@@ -42,7 +42,40 @@ function puqMikrotikVPN_ConfigOptions() {
   );
   return $configarray;
 }
+function puqMikrotikVPN_TestConnection(array $params)
+{
+    try {
+        // Call the service's connection test function.
+        $curl = curl_init($params['serverhostname']);
+        curl_setopt($curl, CURLOPT_NOBODY, true);
+        $result = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        if($httpCode == '200'){
+          $success = true;
+          $errorMsg = '';
+        }else{
+          $success = false;
+          $errorMsg = 'Not Reachable';
+        }
+    } catch (Exception $e) {
+        // Record the error in WHMCS's module log.
+        logModuleCall(
+            'provisioningmodule',
+            __FUNCTION__,
+            $params,
+            $e->getMessage(),
+            $e->getTraceAsString()
+        );
 
+        $success = false;
+        $errorMsg = $e->getMessage();
+    }
+
+    return array(
+        'success' => $success,
+        'error' => $errorMsg,
+    );
+}
 function puqMikrotikVPN_apiCurl($params,$data,$url,$method){
 
   $curl_url = 'https://' . $params['serverhostname'] . ':'. $params['serverport'] . '/rest' . $url;
